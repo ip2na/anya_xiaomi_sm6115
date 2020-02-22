@@ -1921,7 +1921,7 @@ static struct ctl_table vm_table[] = {
 		.extra2		= &one_hundred,
 	},
 #ifdef CONFIG_OPLUS_MM_HACKS
-		.extra2         = &two_hundred,
+		.extra2         = &one_hundred,
 #else
 		.extra2		= &one_hundred,
 	},
