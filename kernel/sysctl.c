@@ -138,10 +138,6 @@ static unsigned long zero_ul;
 static unsigned long one_ul = 1;
 static unsigned long long_max = LONG_MAX;
 static int one_hundred = 100;
-#ifdef CONFIG_OPLUS_MM_HACKS
-extern int direct_vm_swappiness;
-static int two_hundred = 200;
-#endif /* CONFIG_OPLUS_MM_HACKS */
 static int one_thousand = 1000;
 #ifdef CONFIG_PRINTK
 static int ten_thousand = 10000;
@@ -167,6 +163,11 @@ static unsigned int one_hundred_thousand = 100000;
 static unsigned int min_cfs_boost_prio = 99;
 static unsigned int max_cfs_boost_prio = 119;
 #endif
+#ifdef CONFIG_OPLUS_MM_HACKS
+extern int direct_vm_swappiness;
+static int sixty = 60;
+#endif /* CONFIG_OPLUS_MM_HACKS */
+
 /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
 static unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
 
@@ -1923,17 +1924,16 @@ static struct ctl_table vm_table[] = {
 		.extra2         = &two_hundred,
 #else
 		.extra2		= &one_hundred,
-#endif /* CONFIG_OPLUS_MM_HACKS */
 	},
 #ifdef CONFIG_OPLUS_MM_HACKS
 	{
-	        .procname	= "direct_swappiness",
+		.procname	= "direct_swappiness",
 		.data		= &direct_vm_swappiness,
 		.maxlen 	= sizeof(direct_vm_swappiness),
-		.mode		= 0644,
+		.mode		= 0444,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1 	= &zero,
-		.extra2 	= &two_hundred,
+		.extra2 	= &sixty,
 	},
 #endif /* CONFIG_OPLUS_MM_HACKS */
 	{
