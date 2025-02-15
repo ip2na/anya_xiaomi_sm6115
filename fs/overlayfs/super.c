@@ -357,6 +357,11 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
 	struct super_block *sb = dentry->d_sb;
 	struct ovl_fs *ofs = sb->s_fs_info;
 
+	if (sb->s_type && sb->s_type->name && strcmp(sb->s_type->name, "erofs") == 0) {
+		seq_puts(m, ",user_xattr,acl,cache_strategy=readaround");
+		goto skip;
+	}
+
 	seq_show_option(m, "lowerdir", ofs->config.lowerdir);
 	if (ofs->config.upperdir) {
 		seq_show_option(m, "upperdir", ofs->config.upperdir);
@@ -379,6 +384,7 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
 	if (ofs->config.override_creds != ovl_override_creds_def)
 		seq_show_option(m, "override_creds",
 				ofs->config.override_creds ? "on" : "off");
+skip:
 	return 0;
 }
 
@@ -1760,6 +1766,14 @@ static void ovl_inode_init_once(void *foo)
 	inode_init_once(&oi->vfs_inode);
 }
 
+static struct file_system_type ovl_fs_type_fake = {
+	.owner		= THIS_MODULE,
+	.name		= "erofs",
+	.mount		= ovl_mount,
+	.kill_sb	= kill_anon_super,
+};
+MODULE_ALIAS_FS("erofs");
+
 static int __init ovl_init(void)
 {
 	int err;
@@ -1772,15 +1786,19 @@ static int __init ovl_init(void)
 	if (ovl_inode_cachep == NULL)
 		return -ENOMEM;
 
+	register_filesystem(&ovl_fs_type_fake);
 	err = register_filesystem(&ovl_fs_type);
-	if (err)
+	if (err) {
+		unregister_filesystem(&ovl_fs_type_fake);
 		kmem_cache_destroy(ovl_inode_cachep);
+	}
 
 	return err;
 }
 
 static void __exit ovl_exit(void)
 {
+	unregister_filesystem(&ovl_fs_type_fake);
 	unregister_filesystem(&ovl_fs_type);
 
 	/*
