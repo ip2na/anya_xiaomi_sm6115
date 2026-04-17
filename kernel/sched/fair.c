@@ -29,6 +29,8 @@
 
 #include "walt.h"
 
+#include <linux/prefer_silver.h>
+
 #ifdef CONFIG_SMP
 static inline bool task_fits_max(struct task_struct *p, int cpu);
 #endif /* CONFIG_SMP */
@@ -7903,6 +7905,12 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu,
 	start_cpu = get_start_cpu(p);
 	if (start_cpu < 0)
 		goto eas_not_ready;
+
+	if (sysctl_prefer_silver && prefer_silver_check_task_util(p)) {
+		int best = find_best_silver_cpu(p);
+		if (best >= 0)
+			return best;
+	}
 
 	is_rtg = task_in_related_thread_group(p);
 	curr_is_rtg = task_in_related_thread_group(cpu_rq(cpu)->curr);

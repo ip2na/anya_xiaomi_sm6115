@@ -1290,6 +1290,19 @@ config SCHED_TUNE
 
 	  If unsure, say N.
 
+config UCLAMP_ASSIST
+	bool "UClamp configuration helper"
+	depends on ANDROID && UCLAMP_TASK && UCLAMP_TASK_GROUP
+	help
+	  This option enabled in-kernel uclamp setting overrides
+
+config OPLUS_PREFER_SILVER
+	default y
+	bool "a task placement decision for non-ui task"
+	depends on SCHED_WALT
+	help
+	  task placement decision feature for non-ui task
+
 config SYSFS_DEPRECATED
 	bool "Enable deprecated sysfs features to support old userspace tools"
 	depends on SYSFS
