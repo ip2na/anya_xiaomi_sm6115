@@ -512,6 +512,8 @@ endif
 
 ifeq ($(cc-name),clang)
 include $(srctree)/scripts/Makefile.clang
+CC_VERSION_TEXT = $(shell $(CC) --version 2>/dev/null | head -n 1 | sed 's/\#//g')
+export CC_VERSION_TEXT
 endif
 
 RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
