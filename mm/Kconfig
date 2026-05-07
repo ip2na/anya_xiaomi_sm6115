@@ -190,6 +190,24 @@ config CLEAN_MIN_KBYTES
 	  due to the inability to reclaim the protected amount of clean file pages
 	  when other types of pages cannot be reclaimed.
 
+config ANON_MIN_KBYTES
+	int "Default value for vm.anon_min_kbytes"
+	depends on SYSCTL
+	range 0 4294967295
+	default 0
+
+config CLEAN_LOW_KBYTES
+	int "Default value for vm.clean_low_kbytes"
+	depends on SYSCTL
+	range 0 4294967295
+	default 0
+
+config CLEAN_MIN_KBYTES
+	int "Default value for vm.clean_min_kbytes"
+	depends on SYSCTL
+	range 0 4294967295
+	default 0
+
 config HAVE_MEMBLOCK
 	bool
 
