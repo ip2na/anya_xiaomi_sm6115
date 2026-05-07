@@ -18,6 +18,7 @@
 #include <linux/pageblock-flags.h>
 #include <linux/page-flags-layout.h>
 #include <linux/atomic.h>
+#include <linux/kfifo.h>
 #include <linux/android_kabi.h>
 #include <asm/page.h>
 
@@ -923,6 +924,8 @@ typedef struct pglist_data {
 	enum zone_type kcompactd_classzone_idx;
 	wait_queue_head_t kcompactd_wait;
 	wait_queue_head_t kcompressd_wait;
+	struct task_struct *kcompressd;
+	DECLARE_KFIFO(kcompress_fifo, struct page *, 64);
 	struct task_struct *kcompactd;
 #endif
 	/*
