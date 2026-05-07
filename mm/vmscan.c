@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
+unsigned long sysctl_anon_min_kbytes __read_mostly = 0;
+unsigned long sysctl_clean_low_kbytes __read_mostly = 0;
+unsigned long sysctl_clean_min_kbytes __read_mostly = 0;
 /*
  *  linux/mm/vmscan.c
  *
