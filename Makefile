@@ -510,7 +510,7 @@ ifneq ($(KBUILD_SRC),)
 	    $(srctree) $(objtree) $(VERSION) $(PATCHLEVEL)
 endif
 
-ifeq ($(cc-name),clang)
+ifneq ($(findstring clang,$(shell $(CC) --version 2>/dev/null | head -n 1)),)
 include $(srctree)/scripts/Makefile.clang
 CC_VERSION_TEXT = $(shell $(CC) --version 2>/dev/null | head -n 1 | sed 's/\#//g')
 export CC_VERSION_TEXT
@@ -779,7 +779,7 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
 
 KBUILD_CFLAGS += $(stackp-flags-y)
 
-ifeq ($(cc-name),clang)
+ifneq ($(findstring clang,$(shell $(CC) --version 2>/dev/null | head -n 1)),)
 KBUILD_CPPFLAGS += -Qunused-arguments
 
 # Quiet clang warning: comparison of unsigned expression < 0 is always false
