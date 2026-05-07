@@ -922,6 +922,7 @@ typedef struct pglist_data {
 	int kcompactd_max_order;
 	enum zone_type kcompactd_classzone_idx;
 	wait_queue_head_t kcompactd_wait;
+	wait_queue_head_t kcompressd_wait;
 	struct task_struct *kcompactd;
 #endif
 	/*
