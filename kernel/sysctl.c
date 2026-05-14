@@ -1921,11 +1921,6 @@ static struct ctl_table vm_table[] = {
 		.extra2		= &one_hundred,
 	},
 #ifdef CONFIG_OPLUS_MM_HACKS
-		.extra2         = &one_hundred,
-#else
-		.extra2		= &one_hundred,
-	},
-#ifdef CONFIG_OPLUS_MM_HACKS
 	{
 		.procname	= "direct_swappiness",
 		.data		= &direct_vm_swappiness,
