@@ -397,9 +397,14 @@ TRACE_EVENT(binder_command,
 	),
 	TP_printk("cmd=0x%x %s",
 		  __entry->cmd,
+#ifdef CONFIG_FTRACE
 		  _IOC_NR(__entry->cmd) < ARRAY_SIZE(binder_command_strings) ?
 			  binder_command_strings[_IOC_NR(__entry->cmd)] :
-			  "unknown")
+			  "unknown"
+#else
+		  "unknown"
+#endif
+		  )
 );
 
 TRACE_EVENT(binder_return,
@@ -413,11 +418,15 @@ TRACE_EVENT(binder_return,
 	),
 	TP_printk("cmd=0x%x %s",
 		  __entry->cmd,
+#ifdef CONFIG_FTRACE
 		  _IOC_NR(__entry->cmd) < ARRAY_SIZE(binder_return_strings) ?
 			  binder_return_strings[_IOC_NR(__entry->cmd)] :
-			  "unknown")
+			  "unknown"
+#else
+		  "unknown"
+#endif
+		  )
 );
-
 #endif /* _BINDER_TRACE_H */
 
 #undef TRACE_INCLUDE_PATH
