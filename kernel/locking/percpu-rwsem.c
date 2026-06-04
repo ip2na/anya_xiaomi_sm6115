@@ -3,6 +3,7 @@
 #include <linux/percpu.h>
 #include <linux/lockdep.h>
 #include <linux/percpu-rwsem.h>
+#include <linux/sched/signal.h>
 #include <linux/rcupdate.h>
 #include <linux/sched.h>
 #include <linux/errno.h>

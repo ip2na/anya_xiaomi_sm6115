@@ -61,6 +61,7 @@
 #include <linux/kcov.h>
 #include <linux/random.h>
 #include <linux/rcuwait.h>
+#include <linux/sched/signal.h>
 #include <linux/compat.h>
 #include <linux/sysfs.h>
 #include <linux/usermode_driver.h>
