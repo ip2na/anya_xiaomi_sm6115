@@ -1466,10 +1466,13 @@ cpufreq_governor_init(schedutil_gov);
  *   cpu_bw_dl(rq)     → EXISTS, takes struct rq*
  *   sugov_effective_cpu_perf() → NOT in 5.10
  *   get_capacity_ref_freq()    → NOT in 5.10
+ *
+ * NOTE: Shared by both Reflex and Vorpal governors (Vorpal is a
+ * fork of Reflex and reuses these helpers as-is).
  *************************************************************/
 
 /**
- * rfx_get_util_gki510 - GKI 5.10 compatible util getter for Reflex.
+ * rfx_get_util_gki510 - GKI 5.10 compatible util getter for Reflex/Vorpal.
  */
 void rfx_get_util_gki510(int cpu, unsigned long boost,
 			 unsigned long *out_util, unsigned long *out_bw_min)
@@ -1494,7 +1497,7 @@ void rfx_get_util_gki510(int cpu, unsigned long boost,
 EXPORT_SYMBOL_GPL(rfx_get_util_gki510);
 
 /**
- * rfx_dl_bw_exceeded_gki510 - DL bandwidth check for Reflex.
+ * rfx_dl_bw_exceeded_gki510 - DL bandwidth check for Reflex/Vorpal.
  */
 bool rfx_dl_bw_exceeded_gki510(int cpu, unsigned long bw_min)
 {
