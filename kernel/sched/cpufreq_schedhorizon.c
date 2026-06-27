@@ -1465,25 +1465,7 @@ static int sugov_init(struct cpufreq_policy *policy)
 	tunables->up_rate_limit_us = cpufreq_policy_transition_delay_us(policy);
 	tunables->down_rate_limit_us = cpufreq_policy_transition_delay_us(policy);
 	
-	if (cpumask_test_cpu(sg_policy->policy->cpu, cpu_lp_mask)) {
-		tunables->efficient_freq = default_efficient_freq_lp;
-    		tunables->nefficient_freq = ARRAY_SIZE(default_efficient_freq_lp);
-		tunables->up_delay = default_up_delay_lp;
-		tunables->nup_delay = ARRAY_SIZE(default_up_delay_lp);
-		tunables->rtg_boost_freq = DEFAULT_RTG_BOOST_FREQ_LP;
-		tunables->hispeed_load = DEFAULT_HISPEED_LOAD_LP;
-		tunables->hispeed_freq = DEFAULT_HISPEED_FREQ_LP;
-		tunables->pl = DEFAULT_PL_LP;
-	} else if (cpumask_test_cpu(sg_policy->policy->cpu, cpu_perf_mask)) {
-		tunables->efficient_freq = default_efficient_freq_hp;
-    		tunables->nefficient_freq = ARRAY_SIZE(default_efficient_freq_hp);
-		tunables->up_delay = default_up_delay_hp;
-		tunables->nup_delay = ARRAY_SIZE(default_up_delay_hp);
-		tunables->rtg_boost_freq = DEFAULT_RTG_BOOST_FREQ_HP;
-		tunables->hispeed_load = DEFAULT_HISPEED_LOAD_HP;
-		tunables->hispeed_freq = DEFAULT_HISPEED_FREQ_HP;
-		tunables->pl = DEFAULT_PL_HP;
-	} else {
+	{
 		tunables->efficient_freq = default_efficient_freq_pr;
     		tunables->nefficient_freq = ARRAY_SIZE(default_efficient_freq_pr);
 		tunables->up_delay = default_up_delay_pr;
