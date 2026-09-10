@@ -256,10 +256,8 @@ static void rmnet_dellink(struct net_device *dev, struct list_head *head)
 	ep = rmnet_get_endpoint(port, mux_id);
 	if (ep) {
 		hlist_del_init_rcu(&ep->hlnode);
-		rmnet_unregister_bridge(dev, port);
-		rmnet_vnd_dellink(mux_id, port, ep);
-		synchronize_rcu();
-		kfree(ep);
+		port->nr_rmnet_devs--;
+		kfree_rcu(ep, rcu);
 	}
 
 	if (!port->nr_rmnet_devs)
@@ -280,42 +278,31 @@ static void rmnet_force_unassociate_device(struct net_device *dev)
 	struct rmnet_port *port;
 	unsigned long bkt_ep;
 	LIST_HEAD(list);
-	HLIST_HEAD(cleanup_list);
 
 	if (!rmnet_is_real_dev_registered(real_dev))
 		return;
 
 	ASSERT_RTNL();
 
-	port = rmnet_get_port_rtnl(dev);
-	qmi_rmnet_qmi_exit(port->qmi_info, port);
+	port = rmnet_get_port_rtnl(real_dev);
 
-	rmnet_unregister_bridge(dev, port);
-
-	hash_for_each_safe(port->muxed_ep, bkt_ep, tmp_ep, ep, hlnode) {
-		unregister_netdevice_queue(ep->egress_dev, &list);
-		rmnet_vnd_dellink(ep->mux_id, port, ep);
-
-		hlist_del_init_rcu(&ep->hlnode);
-		hlist_add_head(&ep->hlnode, &cleanup_list);
+	if (port->nr_rmnet_devs) {
+		/* real device */
+		rmnet_unregister_bridge(dev, port);
+		hash_for_each_safe(port->muxed_ep, bkt_ep, tmp_ep, ep, hlnode) {
+			unregister_netdevice_queue(ep->egress_dev, &list);
+			netdev_upper_dev_unlink(real_dev, ep->egress_dev);
+			hlist_del_init_rcu(&ep->hlnode);
+			port->nr_rmnet_devs--;
+			kfree_rcu(ep, rcu);
+		}
+		rmnet_unregister_real_device(real_dev, port);
+		unregister_netdevice_many(&list);
+	} else {
+		rmnet_unregister_bridge(dev, port);
 	}
-
-	synchronize_rcu();
-
-	hlist_for_each_entry_safe(ep, tmp_ep, &cleanup_list, hlnode) {
-		hlist_del(&ep->hlnode);
-		kfree(ep);
-	}
-
-	/* Unregistering devices in context before freeing port.
-	 * If this API becomes non-context their order should switch.
-	 */
-	unregister_netdevice_many(&list);
-
-	qmi_rmnet_qos_exit_post();
-
-	rmnet_unregister_real_device(real_dev, port);
 }
+
 
 static int rmnet_config_notify_cb(struct notifier_block *nb,
 				  unsigned long event, void *data)
